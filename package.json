@@ -1,0 +1,25 @@
+{
+  "name": "jstests",
+  "version": "1.0.0",
+  "description": "a",
+  "main": "regex.js",
+  "dependencies": {
+    "randexp": "^0.5.3"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "node --experimental-json-modules regex.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/LAxBANDA/jstests.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/LAxBANDA/jstests/issues"
+  },
+  "homepage": "https://github.com/LAxBANDA/jstests#readme",
+  "type": "module"
+}
