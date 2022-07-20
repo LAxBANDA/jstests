@@ -48,8 +48,8 @@ function generateDiskPaths() {
 
         for(let d = 0; d < diskPaths.length; d++){
             variables.forEach(variable => {
-                paths.push(`${diskPaths[d]}<${variable.key}>`)
-                paths.push(`${diskPaths[d]}<${variable.key}><${variable.key}>`)
+                paths.push(`${diskPaths[d]}<${variable.key}>sada/`)
+                paths.push(`${diskPaths[d]}<${variable.key}><${variable.key}>aba`)
                 
                 randompaths.forEach(rp => {
                     paths.push(`${paths[paths.length - 1]}/${rp}`)
