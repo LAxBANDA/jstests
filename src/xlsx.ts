@@ -3,19 +3,19 @@ import * as eventsList from '../events.json';
 
 const events: any = <any>eventsList;
 
-(() => {
-
+((title = 'Eventos') => {
+  const eventos = events['default']
   // Obtenemos los headers
   let headers = Object.keys(eventsList[0]);
   // Ordernamos para que el header "date" esté primero
   headers.sort((a, b) => (b == 'date') ? 1 : -1);
 
   // Generamos la data
-  const workSheet = XLSX.utils.json_to_sheet(events['default'], { header: headers });
+  const workSheet = XLSX.utils.json_to_sheet(eventos, { header: headers });
   // Generamos un libro dentro del excel
   const workBook = XLSX.utils.book_new();
   // Asignamos + titulo de el libro
-  XLSX.utils.book_append_sheet(workBook, workSheet, 'Eventos');
+  XLSX.utils.book_append_sheet(workBook, workSheet, title);
   // Cambiamos la primera key desde el origin A1 por "fecha", es decir: date por Fecha
   XLSX.utils.sheet_add_aoa(workSheet, [["Fecha"]], { origin: "A1" });
   // Name of file
