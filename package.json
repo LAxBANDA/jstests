@@ -10,7 +10,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "regex": "node --experimental-json-modules src/regex/regex.js",
-    "xlsx": "node --experimental-json-modules src/xlsx/xlsx.js"
+    "xlsx": "node --experimental-json-modules src/xlsx/xlsx.js",
+    "regex-input-text": "node --experimental-json-modules src/regex-input-text/server.js"
   },
   "repository": {
     "type": "git",
