@@ -1,0 +1,6 @@
+// /g = buscar todas las coincidencias
+// /s = espacio linea en blanco, etc
+// \b empieza con
+// ? puede estar o no
+// * puede estar 0 o más veces
+// + puede estar 1 o más veces
