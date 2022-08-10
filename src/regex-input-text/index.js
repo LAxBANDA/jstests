@@ -1,4 +1,3 @@
-console.log('iniciado')
 const conectors = [
     {
         "_id": "602e9e29f0c88afed99babc2",
@@ -6022,138 +6021,193 @@ const conectors = [
     }
 ];
 
-let columns = 'columns'
+let columns = []
 const connectorsNames = Array.from(conectors, connector => connector.name).join('|');
 const timeUnits = "segundos|minutos|horas|semanas|meses|años"
+const timeUnits2 = timeUnits.split("|")
 
+// Al cargar el DOM
 document.addEventListener('DOMContentLoaded', (event) => {
-    console.log('DOM fully loaded and parsed');
-
     const input = document.querySelector('input');
     input.addEventListener('input', formulaWriting);
     input.focus()
 
-    /**
-     * Cuando presiona una tecla dentro del input
-     * @param {*} event 
-     */
-    function formulaWriting(event) {
-        checkCursorPosition(event);
-        const value = event.target.value;
+});
 
-        // Devuelve true si el input contiene algun suma() inválido con la nonmenclatura indicada
-        const regexValueValidator = /'\(connectors\)','\(columns\)',\(\([1-9][0-9]\)|*\),'timeUnits'/;
 
-        // Regexp final
-        const regexPattern = new RegExp(
-            regexValueValidator
+/**
+ * **********************
+ * HTML DOM: FUNCIONES PARA MOSTRAR MENSAJES DE ERROR
+ * **********************
+ */
+/**
+ * HTML Crear mensaje de error
+ * @returns 
+ */
+const createErrorMessage = () => {
+    const existError = getErrorMessage();
+    if (existError) {
+        return existError;
+    };
+
+    let selectorNode = document.createElement('p');
+    selectorNode.classList.add('selector');
+    selectorNode.textContent = 'Este campo es inválido, alguna de las suma() no cumple con la nomeclatura'
+    document.querySelector('.input').appendChild(selectorNode);
+};
+
+// Obtener el mensaje de error
+const getErrorMessage = () => {
+    return document.querySelector('.selector')
+};
+
+// Eliminar el mensaje de error
+const deleteErrorMessage = () => {
+    getErrorMessage()?.remove()
+};
+
+/**
+ * 
+ * INPUT CHECK: FUNCIONES PARA QUE EL INPUT FUNCIONE ADECUADAMENTE 
+ * 
+ */
+
+// Crear el regex
+const createRegex = () => {
+    // Devuelve true si el input contiene algun suma() inválido con la nonmenclatura indicada
+    const regexValueValidator = /'\(connectors\)','\(columns\)',\(\([1-9][0-9]*\)|\(0\)\),'timeUnits'/;
+
+    // Regexp final
+    const regexPattern = new RegExp(
+        regexValueValidator
             .toString() // convertir el regex en string
             .substr(1) //eliminar el ultimo caracter
             .slice(0, -1) // eliminar el primer caracter
             .replace('connectors', connectorsNames) // reemplazar 'conector' por los nombres de los conectores
             .replace('columns', columns) // replace 'columns' to connectors real names
             .replace('timeUnits', timeUnits) // replace 'timeUnits' por la unidades reales de tiempo
-        );
+    );
 
-        console.log(regexPattern);
-        checkSumas(value, regexPattern);
-    };
+    return regexPattern;
+};
 
-    /**
-     * Chequear todas las suma() del input
-     * @param {*} value event.target.value
-     * @param {RegExp} validator Regex
-     * @returns {boolean} verdadero si es inválido, falso si es válida todas las suma(*)
-     */
-    function checkSumas(value, validator) {
-        const re = /(suma\(.*?\))+/g;
+/**
+ * Cuando presiona una tecla dentro del input
+ * @param {*} event 
+ */
+const formulaWriting = (event) => {
+    checkCursorPosition(event);
+    const value = event.target.value;
 
-        // 1. Obtenemos todos los casos de coincidencia, es decir todos los suma(*)
-        const matches = value.trim().match(re);
-        const matchesLength = matches && matches.length;
+    const hasInvalidSuma = checkSumas(value);
+    if (hasInvalidSuma) {
+        createErrorMessage()
+    } else {
+        deleteErrorMessage()
+    }
+};
 
-        // No hay sumas
-        if (!matchesLength) {
-            return false
-        }
+/**
+ * Chequear todas las suma() del input
+ * @param {*} value event.target.value
+ * @param {RegExp} validator Regex
+ * @returns {boolean} verdadero si es inválido, falso si es válida todas las suma(*)
+ */
+const checkSumas = (value) => {
+    const re = /(suma\(.*?\))+/g;
 
-        // 2. Aplicamos los criterios dentro de la suma()
-        const regexValueValidator = validator;
-        const regexValueInParenthesis = /\((.*?)\)/;
-        // Iteramos todas las coincidencia y buscamos si alguna suma() no tiene la nomeclatura correspondiente
-        const hasInvalidSuma = matches.some(matchValue => {
-            // const parenthesisValue = match.match(valueMatch)
-            
-            // const parenthesisValue = match.match(regexValueValidator)
-            // console.log(parenthesisValue)
-            // No hay nada dentro del parentesis de suma()
-            // if (!parenthesisValue) {
-            //     return true;
-            // };
-            const parenthesisValueResult = matchValue.match(regexValueInParenthesis);
-            if(!parenthesisValueResult){
-                return true;
-            };
+    // 1. Obtenemos todos los casos de coincidencia, es decir todos los suma(*)
+    const matches = value.trim().match(re);
+    const matchesLength = matches && matches.length;
 
-            const valuesSplitted = parenthesisValueResult[1].split(',');
-            valuesSplitted.forEach((element, index, array) => {
-                if (index == 0) {
-                    console.log(element)
-                    const findConector = conectors.find(i => i.name === element);
-                    if(!findConector){
-                        return;
-                    }
-                    columns = Array.from(findConector.columns, item => item.name).join('|');
-                    console.log('conector', columns);
-                } else if (index == 1) {
-                    console.log('columnas', element)
-                }
-            });
-
-            return false
-        })
-
-        return hasInvalidSuma
+    // No hay ningun texto que coincida con suma()
+    if (!matchesLength) {
+        return false
     }
 
-    /**
-     * Función para cerrar cuando se escribe suma(
-     * @param {*} event 
-     * @returns 
-     */
-    function checkCursorPosition(event) {
-        // FASE 1: ver si agrega suma()
-        // La posición en el campo de texto en que se está
-        if (event.inputType === 'deleteContentForward' || event.inputType === 'deleteContentBackward') {
-            return;
+    // 2. Aplicamos los criterios dentro de la suma()
+    const regexValueInParenthesis = /\((.*?)\)/;
+    // Iteramos todas las coincidencia y buscamos si alguna suma() no tiene la nomeclatura correspondiente
+    const hasInvalidSuma = matches.some(matchValue => {
+
+        // Chequear si existen valores dentro del () de suma
+        const parenthesisValueResult = matchValue.match(regexValueInParenthesis);
+        if (!parenthesisValueResult) {
+            return true;
         };
 
-        const cursorPosition = event.target.selectionStart
-        const textMatch = 'suma(';
-        if (cursorPosition < textMatch.length) {
-            return;
+        const valuesSplitted = parenthesisValueResult[1].split(',');
+
+        // Chequear si hay 4 , dentro de el parentesis de suma(, , , ,)
+        // Esto asegura que todas las suma() tengan 4 valores dentro separados por ,
+        if (valuesSplitted.length != 4) {
+            return true;
         };
 
-        // El valor del input text
-        const value = event.target.value;
-        const lastText = value.slice(cursorPosition - textMatch.length, cursorPosition);
+        // 1. Conector
+        const connector = valuesSplitted[0].replaceAll('\'', '')
+        const findConector = conectors.find(i => i.name === connector);
+        if (!findConector) {
+            return true;
+        };
 
-        if (lastText === textMatch) {
-            // console.log('estas dentro del primer parentesis de ', textMatch);
-            // habilitar uso de parentesis y mostrar conectores
-            const stringAdd = "'connectors','columns',0,'timeUnits')"
-            const conectorString = 'conector'
-            if (value.length == cursorPosition || value[cursorPosition] != ')') {
-                input.value += stringAdd
-                input.setSelectionRange(cursorPosition + 1, cursorPosition + 1 + conectorString.length);
-                // acá mostrar el select de conector
-                // ejecutar div
-                // const selectorNode = document.createElement('div');
-                // selectorNode.classList.add('selector');
-                // document.body.appendChild(selectorNode)
-                return;
-            };
+        // 2. Columna
+        const column = valuesSplitted[1].replaceAll('\'', '');
+        const findColumn = findConector.columns.find(i => i.name === column);
+        if (!findColumn) {
+            return true;
+        };
+
+        // 3. Tiempo
+        const time = Number(valuesSplitted[2]);
+        if (Number.isNaN(time)) {
+            return true
+        };
+
+        // 4. Unidad de tiempo
+        const timeUnit = valuesSplitted[3].replaceAll('\'', '');
+        const findTimeUnit = timeUnits2.find(t => t === timeUnit);
+        if (!findTimeUnit) {
+            return true;
+        }
+
+        return false
+    })
+
+    return hasInvalidSuma
+}
+
+/**
+ * Función para cerrar cuando se escribe suma(
+ * @param {*} event 
+ * @returns 
+ */
+const checkCursorPosition = (event) => {
+    // FASE 1: ver si agrega suma()
+    // La posición en el campo de texto en que se está
+    if (event.inputType === 'deleteContentForward' || event.inputType === 'deleteContentBackward') {
+        return;
+    };
+
+    const cursorPosition = event.target.selectionStart
+    const textMatch = 'suma(';
+    if (cursorPosition < textMatch.length) {
+        return;
+    };
+
+    // El valor del input text
+    const value = event.target.value;
+    const lastText = value.slice(cursorPosition - textMatch.length, cursorPosition);
+
+    if (lastText === textMatch) {
+        // habilitar uso de parentesis y mostrar conectores
+        const stringAdd = "'connectors','columns',0,'timeUnits')"
+        const conectorString = 'connectors'
+        if (value.length == cursorPosition || value[cursorPosition] != ')') {
+            const input = document.querySelector('input')
+            input.value += stringAdd
+            input.setSelectionRange(cursorPosition + 1, cursorPosition + 1 + conectorString.length);
+            return;
         };
     };
-});
-
+};
