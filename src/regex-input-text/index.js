@@ -6021,17 +6021,17 @@ const conectors = [
     }
 ];
 
-let columns = []
+let columns = [];
 const connectorsNames = Array.from(conectors, connector => connector.name).join('|');
-const timeUnits = "segundos|minutos|horas|semanas|meses|años"
-const timeUnits2 = timeUnits.split("|")
+const timeUnits = "segundos|minutos|horas|semanas|meses|años";
+const timeUnits2 = timeUnits.split("|");
+const textMatch = 'suma('
 
 // Al cargar el DOM
 document.addEventListener('DOMContentLoaded', (event) => {
     const input = document.querySelector('input');
     input.addEventListener('input', formulaWriting);
-    input.focus()
-
+    input.focus();
 });
 
 
@@ -6052,18 +6052,18 @@ const createErrorMessage = () => {
 
     let selectorNode = document.createElement('p');
     selectorNode.classList.add('selector');
-    selectorNode.textContent = 'Este campo es inválido, alguna de las suma() no cumple con la nomeclatura'
+    selectorNode.textContent = 'Este campo es inválido, alguna de las suma() no cumple con la nomeclatura';
     document.querySelector('.input').appendChild(selectorNode);
 };
 
 // Obtener el mensaje de error
 const getErrorMessage = () => {
-    return document.querySelector('.selector')
+    return document.querySelector('.selector');
 };
 
 // Eliminar el mensaje de error
 const deleteErrorMessage = () => {
-    getErrorMessage()?.remove()
+    getErrorMessage()?.remove();
 };
 
 /**
@@ -6101,10 +6101,10 @@ const formulaWriting = (event) => {
 
     const hasInvalidSuma = checkSumas(value);
     if (hasInvalidSuma) {
-        createErrorMessage()
+        createErrorMessage();
     } else {
-        deleteErrorMessage()
-    }
+        deleteErrorMessage();
+    };
 };
 
 /**
@@ -6122,8 +6122,8 @@ const checkSumas = (value) => {
 
     // No hay ningun texto que coincida con suma()
     if (!matchesLength) {
-        return false
-    }
+        return false;
+    };
 
     // 2. Aplicamos los criterios dentro de la suma()
     const regexValueInParenthesis = /\((.*?)\)/;
@@ -6161,7 +6161,7 @@ const checkSumas = (value) => {
         // 3. Tiempo
         const time = Number(valuesSplitted[2]);
         if (Number.isNaN(time)) {
-            return true
+            return true;
         };
 
         // 4. Unidad de tiempo
@@ -6171,10 +6171,10 @@ const checkSumas = (value) => {
             return true;
         }
 
-        return false
+        return false;
     })
 
-    return hasInvalidSuma
+    return hasInvalidSuma;
 }
 
 /**
@@ -6184,13 +6184,12 @@ const checkSumas = (value) => {
  */
 const checkCursorPosition = (event) => {
     // FASE 1: ver si agrega suma()
-    // La posición en el campo de texto en que se está
     if (event.inputType === 'deleteContentForward' || event.inputType === 'deleteContentBackward') {
         return;
     };
 
-    const cursorPosition = event.target.selectionStart
-    const textMatch = 'suma(';
+    const cursorPosition = event.target.selectionStart; // La posición en el campo de texto en que se está
+    
     if (cursorPosition < textMatch.length) {
         return;
     };
@@ -6199,13 +6198,13 @@ const checkCursorPosition = (event) => {
     const value = event.target.value;
     const lastText = value.slice(cursorPosition - textMatch.length, cursorPosition);
 
-    if (lastText === textMatch) {
+    if (lastText === textMatch && (value[cursorPosition] === undefined)) {
         // habilitar uso de parentesis y mostrar conectores
-        const stringAdd = "'connectors','columns',0,'timeUnits')"
-        const conectorString = 'connectors'
+        const stringAdd = "'connectors','columns',0,'timeUnits')";
+        const conectorString = 'connectors';
         if (value.length == cursorPosition || value[cursorPosition] != ')') {
-            const input = document.querySelector('input')
-            input.value += stringAdd
+            const input = document.querySelector('input');
+            input.value += stringAdd;
             input.setSelectionRange(cursorPosition + 1, cursorPosition + 1 + conectorString.length);
             return;
         };
