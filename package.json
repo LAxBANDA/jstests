@@ -11,7 +11,8 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "regex": "node --experimental-json-modules src/regex/regex.js",
     "xlsx": "node --experimental-json-modules src/xlsx/xlsx.js",
-    "regex-input-text": "node --experimental-json-modules src/regex-input-text/server.js"
+    "regex-input-text": "node --experimental-json-modules src/regex-input-text/server.js",
+    "stations": "node src/testdata/index.js"
   },
   "repository": {
     "type": "git",
@@ -22,6 +23,5 @@
   "bugs": {
     "url": "https://github.com/LAxBANDA/jstests/issues"
   },
-  "homepage": "https://github.com/LAxBANDA/jstests#readme",
-  "type": "module"
+  "homepage": "https://github.com/LAxBANDA/jstests#readme"
 }
