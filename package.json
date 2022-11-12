@@ -4,6 +4,8 @@
   "description": "a",
   "main": "regex.js",
   "dependencies": {
+    "fs": "^0.0.1-security",
+    "html-pdf-node": "^1.0.8",
     "randexp": "^0.5.3",
     "xlsx": "^0.18.5"
   },
@@ -12,7 +14,8 @@
     "regex": "node --experimental-json-modules src/regex/regex.js",
     "xlsx": "node --experimental-json-modules src/xlsx/xlsx.js",
     "regex-input-text": "node --experimental-json-modules src/regex-input-text/server.js",
-    "stations": "node src/testdata/index.js"
+    "stations": "node src/testdata/index.js",
+    "html-pdf-node": "node src/html-pdf-node/index.js"
   },
   "repository": {
     "type": "git",
