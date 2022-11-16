@@ -26,5 +26,6 @@
   "bugs": {
     "url": "https://github.com/LAxBANDA/jstests/issues"
   },
-  "homepage": "https://github.com/LAxBANDA/jstests#readme"
+  "homepage": "https://github.com/LAxBANDA/jstests#readme",
+  "type": "module"
 }

@@ -1,8 +1,8 @@
-import * as XLSX from 'xlsx';
+import XLSX from 'xlsx';
 import eventsList from './events.json';
+import path from 'path';
 
-((title = 'Eventos', arrayOfObjects = eventsList) => {
-  // Obtenemos los headers
+const createXLSX = (title = 'Eventos', arrayOfObjects) => {
   let headers = Object.keys(arrayOfObjects[0]);
   // Ordernamos para que el header "date" esté primero
   headers.sort((_, b) => (b == 'date') ? 1 : -1);
@@ -20,4 +20,54 @@ import eventsList from './events.json';
   // Download that file
   XLSX.writeFile(workBook, excelFileNameTemplate);
   console.info('excel descargado en el directorio raíz del proyecto')
-})();
+};
+
+const readXLSX = (filePath) => {
+  const fileData = XLSX.readFile(filePath);
+  const sheets = fileData.SheetNames;
+  let data = [];
+
+  for (let i = 0; i < sheets.length; i++) {
+    const temp = XLSX.utils.sheet_to_json(fileData.Sheets[fileData.SheetNames[i]]);
+    temp.forEach((r) => data.push(r))
+
+  }
+  return data;
+}
+
+const filePath = path.join("2BB-IPI-07.xlsx");
+const inclinometerData = readXLSX(filePath);
+
+const compareInclinometer = data => {
+  const firstData = Object.values(data[0])
+  const lastData = Object.values(data[data.length - 1])
+  const [firstDate, ...firstvalues] = firstData;
+  const [lastDate, ...lastValues] = lastData;
+
+  const deltas = lastValues.map((lv, i) => lv - firstvalues[i]);
+  const [anclaje1, anclaje2, ...restDeltas1] = deltas;
+  let superior = getSuperior(anclaje1, anclaje2, restDeltas1)
+  // console.log(superior)
+  // const 
+  const [anclaje3, anclaje4, ...restDeltas2] = deltas.reverse();
+  let inferior = getInferior(anclaje3, anclaje4, restDeltas2).reverse();
+  console.log({inferior, superior})
+};
+
+const getSuperior = (anclaje1, anclaje2, restDeltas1) => {
+  let anclajeSuperior = [anclaje1, anclaje2];
+
+  restDeltas1.forEach((delta, i) => anclajeSuperior.push(anclajeSuperior[i] + delta));
+
+  return anclajeSuperior
+}
+
+const getInferior = (anclaje1, anclaje2, restDeltas1) => {
+  let anclajeSuperior = [anclaje1, anclaje2];
+
+  restDeltas1.forEach((delta, i) => anclajeSuperior.push(anclajeSuperior[i] + delta));
+
+  return anclajeSuperior
+}
+
+compareInclinometer(inclinometerData);
